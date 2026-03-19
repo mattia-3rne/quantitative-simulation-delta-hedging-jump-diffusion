@@ -57,6 +57,7 @@ The framework employs the standard analytic solutions for BSM option pricing to 
 $$C = S \Phi(d_1) - K \exp(-rT) \Phi(d_2)$$
 
 Where:
+
 $$d_1 = \frac{\ln(S/K) + (r + 0.5 \sigma^2) T}{\sigma \sqrt{T}}$$
 $$d_2 = d_1 - \sigma \sqrt{T}$$
 
