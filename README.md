@@ -51,8 +51,33 @@ To preserve the no-arbitrage condition and ensure the asset appreciates at the r
 
 $$S_{t+dt} = S_t \exp\left(\left(r - \lambda k - \frac{1}{2}\sigma^2\right)dt + \sigma \sqrt{dt} Z + \sum_{i=1}^{N_{dt}} Y_i\right)$$
 
-### 3.2 Pricing and the Derivation of Delta
-The framework employs the standard analytic solutions for BSM option pricing to extract the required Greeks for dynamic rebalancing. The price of a European Call $C$ is formulated as:
+### 3.2 The Replicating Portfolio and Ito's Lemma
+The core of delta hedging is mathematically derived from constructing a risk-neutral synthetic portfolio. Let $\Pi$ represent a self-financing portfolio consisting of one long European Call option ($C$) and a short position of a specific amount ($\Delta$) of the underlying asset ($S$):
+
+$$\Pi = C - \Delta S$$
+
+Assuming the asset follows Geometric Brownian Motion, we apply Ito's Lemma to model the instantaneous change in the option's value ($dC$):
+
+$$dC = \frac{\partial C}{\partial t}dt + \frac{\partial C}{\partial S}dS + \frac{1}{2}\sigma^2 S^2 \frac{\partial^2 C}{\partial S^2}dt$$
+
+The corresponding change in our portfolio's value over the same infinitesimal time step is:
+
+$$d\Pi = dC - \Delta dS$$
+
+Substituting $dC$ into the portfolio equation allows us to group the deterministic ($dt$) and stochastic ($dS$) components:
+
+$$d\Pi = \left( \frac{\partial C}{\partial t} + \frac{1}{2}\sigma^2 S^2 \frac{\partial^2 C}{\partial S^2} \right)dt + \left( \frac{\partial C}{\partial S} - \Delta \right)dS$$
+
+To perfectly hedge against directional market risk, the portfolio must be completely immunized against the random asset price movements ($dS$). By setting the hedge ratio $\Delta$ strictly equal to the first partial derivative of the option with respect to the asset price ($\frac{\partial C}{\partial S}$), the stochastic term mathematically cancels out.
+
+Because the portfolio is now entirely riskless, the no-arbitrage principle dictates that it must appreciate exactly at the continuous risk-free rate ($r$):
+
+$$d\Pi = r\Pi dt$$
+
+This fundamental equivalence leads directly to the Black-Scholes partial differential equation (PDE), defining the fair value of the option.
+
+### 3.3 Analytic Pricing and the Derivation of Delta
+The framework employs the standard analytic solutions to the BSM PDE to extract the required Greeks for dynamic rebalancing. The closed-form price of a European Call $C$ is formulated as:
 
 $$C = S \Phi(d_1) - K \exp(-rT) \Phi(d_2)$$
 
@@ -61,9 +86,8 @@ Where:
 $$d_1 = \frac{\ln(S/K) + (r + 0.5 \sigma^2) T}{\sigma \sqrt{T}}$$
 $$d_2 = d_1 - \sigma \sqrt{T}$$
 
-**Deriving the Delta ($\Delta$):**
-Delta represents the first-order partial derivative of the option valuation with respect to the underlying asset's price: $\Delta = \frac{\partial C}{\partial S}$.
-Applying the chain rule to the call pricing function yields:
+**Deriving the Analytic Delta ($\Delta$):**
+As established via Ito's Lemma, Delta represents $\frac{\partial C}{\partial S}$. Applying the chain rule to the call pricing function yields:
 
 $$\frac{\partial C}{\partial S} = \Phi(d_1) + S \phi(d_1) \frac{\partial d_1}{\partial S} - K \exp(-rT) \phi(d_2) \frac{\partial d_2}{\partial S}$$
 
@@ -71,11 +95,11 @@ Because the structural relationship between $d_1$ and $d_2$ is linear with respe
 
 $$\frac{\partial d_1}{\partial S} = \frac{\partial d_2}{\partial S} = \frac{1}{S \sigma \sqrt{T}}$$
 
-Furthermore, a fundamental mathematical identity within the Black-Scholes partial differential equation establishes that:
+Furthermore, a fundamental mathematical identity establishes that:
 
 $$S \phi(d_1) = K \exp(-rT) \phi(d_2)$$
 
-Where $\phi(\cdot)$ denotes the probability density function of the standard normal distribution. By substituting these derived relationships back into the expanded partial derivative equation, the subsequent terms perfectly negate one another. This algebraic cancellation isolates the cumulative distribution function, yielding the final, simplified expressions for the theoretical deltas:
+Where $\phi(\cdot)$ denotes the probability density function of the standard normal distribution. By substituting these derived relationships back into the expanded partial derivative equation, the subsequent terms perfectly negate one another. This algebraic cancellation isolates the cumulative distribution function, yielding the final, simplified expressions for the theoretical deltas utilized in the simulation:
 
 $$\Delta_{call} = \Phi(d_1)$$
 $$\Delta_{put} = \Phi(d_1) - 1$$
@@ -106,7 +130,7 @@ The computational framework is structured as a sequential, vectorized pipeline t
 
 1.  **Clone the repository**:
     ```bash
-    git clone https://github.com/mattia-3rne/delta-hedging-in-merton-jump-diffusion-model.git
+    git clone https://github.com/mattia-3rne/quantitative-simulation-delta-hedging-jump-diffusion.git
     ```
 
 2.  **Install dependencies**:
