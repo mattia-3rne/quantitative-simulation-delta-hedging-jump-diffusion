@@ -1,4 +1,4 @@
-# Quantitative Simulation Framework for Delta Hedging in Jump-Diffusion Environments
+# Quantitative Simulation Framework for Delta Hedging in Jump-Diffusion Environment
 
 ## 1. Abstract
 This repository presents a quantitative framework for evaluating the efficacy of dynamic delta hedging strategies within both a standard Black-Scholes-Merton (BSM) environment and a Merton Jump-Diffusion (MJD) market model. By simulating stochastic asset trajectories and applying discrete-time hedging formulations to European options, we demonstrate both analytically and empirically how the introduction of discontinuous price jumps disrupts the idealized replicating portfolio. Furthermore, the analysis highlights the inherent discretization risk that emerges when continuous-time continuous-state models are approximated using finite trading intervals.
